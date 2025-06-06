@@ -1,13 +1,10 @@
 package model;
-import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinTable;
-
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
@@ -34,8 +31,9 @@ public class Plant {
 	    @JoinColumn(name = "id_category") 
 	    private Category category;
 
-		public Plant(Long id_plante, String description, String image, Double price, String name, Integer stock,
-				Category category) {
+		public Plant(Long id_plante, String description, String image, 
+				Double price, String name, 
+				Integer stock, Category category) {
 			super();
 			this.id_plante = id_plante;
 			this.description = description;
