@@ -2,10 +2,10 @@ services:
   mysql:
     image: mysql:latest
     environment:
-      MYSQL_DATABASE: plantelys         # <-- nom réel de ta base
+      MYSQL_DATABASE: plantelys         
       MYSQL_USER: myuser
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret123
     ports:
-      - "3307:3306"                     # <-- expose le port à localhost
+      - "3307:3306"                     
 
