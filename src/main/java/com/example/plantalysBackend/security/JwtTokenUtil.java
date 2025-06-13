@@ -1,13 +1,11 @@
 package com.example.plantalysBackend.security;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,40 +19,48 @@ public class JwtTokenUtil {
     @Value("${jwt.expiration}")
     private long jwtExpirationMs;
 
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    private SecretKey secretKey;
+
+    @PostConstruct
+    public void init() {
+        // Vérifie que la clé est suffisamment longue pour HS512 (≥ 64 bytes)
+        if (jwtSecret.length() < 64) {
+            throw new IllegalArgumentException("jwt.secret must be at least 64 characters for HS512");
+        }
+        secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String generateToken(String email, List<String> roles) {
         return Jwts.builder()
-            .setSubject(email)
-            .claim("roles", roles)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-            .signWith(SignatureAlgorithm.HS512, getSigningKey())
-            .compact();
+                .setSubject(email)
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
     }
+
     public String getEmail(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public List<String> getRoles(String token) {
         Object rolesObj = Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .get("roles");
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles");
 
         if (rolesObj instanceof List<?>) {
             return ((List<?>) rolesObj).stream()
-                .map(Object::toString)
-                .collect(Collectors.toList());
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
         }
 
         return List.of();
@@ -63,14 +69,13 @@ public class JwtTokenUtil {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token);
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+           
             return false;
         }
     }
-
-    
 }

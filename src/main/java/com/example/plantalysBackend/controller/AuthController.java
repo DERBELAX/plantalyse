@@ -42,8 +42,11 @@ public class AuthController {
             throw new RuntimeException("Email ou mot de passe invalide");
         }
 
-        List<String> roles = List.of(user.getRoles().split(","));
-        String token = jwtTokenUtil.generateToken(email, roles);
+        //String roles = user.getRoles();
+        
+        String token = jwtTokenUtil.generateToken(user.getEmail(), List.of(user.getRoles()));
+       
+        // String token = jwtTokenUtil.generateToken(user);
 
         return Map.of("token", token);
     }
