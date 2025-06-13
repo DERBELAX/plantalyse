@@ -1,4 +1,4 @@
-package model;
+package com.example.plantalysBackend.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

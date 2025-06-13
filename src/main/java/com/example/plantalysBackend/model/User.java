@@ -1,4 +1,4 @@
-package model;
+package com.example.plantalysBackend.model;
 
 import java.util.List;
 

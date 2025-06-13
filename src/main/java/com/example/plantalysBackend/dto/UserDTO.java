@@ -1,4 +1,4 @@
-package dto;
+package com.example.plantalysBackend.dto;
 
 public class UserDTO {
 

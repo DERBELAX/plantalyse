@@ -1,4 +1,4 @@
-package model;
+package com.example.plantalysBackend.model;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -16,7 +16,7 @@ public class Category {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id_category;
 	    private String name;
-	    @OneToMany(mappedBy = "categories")
+	    @OneToMany(mappedBy = "category")
 	    private List<Plant> plants;
 		public Category(Long id_category, String name, List<Plant> plants) {
 			super();
