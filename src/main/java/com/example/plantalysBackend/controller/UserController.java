@@ -17,7 +17,7 @@ import com.example.plantalysBackend.model.User;
 import com.example.plantalysBackend.service.UserService;
 import com.example.plantalysBackend.dto.UserDTO;
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 @CrossOrigin("*")
 public class UserController {
 	
