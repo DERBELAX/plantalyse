@@ -2,6 +2,7 @@ package com.example.plantalysBackend.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,8 +16,8 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_user;
-
+	@Column(name = "id_user")
+	private Long id_user;
     private String lastname;
     private String firstname;
     private String password;

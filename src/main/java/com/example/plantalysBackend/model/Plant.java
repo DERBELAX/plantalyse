@@ -14,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 @Table(name = "plant")
 public class Plant {
 	 
-
 	@Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id_plante;
