@@ -25,7 +25,13 @@ public class AuthController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
+    
+    @PostMapping("/signup")
+    public User registerUser(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles("USER"); 
+        return userRepository.save(user);
+    }
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> payload) {
         String email = payload.get("email");
