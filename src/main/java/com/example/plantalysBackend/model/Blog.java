@@ -26,7 +26,7 @@ public class Blog {
 
     @Column(columnDefinition = "TEXT")
     private String description;
-
+    private String image;
     private LocalDateTime createdat;
     private LocalDateTime updatedat;
 
@@ -42,18 +42,20 @@ public class Blog {
     )
     private List<Plant> plants;
 
-	public Blog(Long id_blog, String title, String description, LocalDateTime createdat, LocalDateTime updatedat,
-			User user, List<Plant> plants) {
+	
+
+	public Blog(Long id_blog, String title, String description, String image, LocalDateTime createdat,
+			LocalDateTime updatedat, User user, List<Plant> plants) {
 		super();
 		this.id_blog = id_blog;
 		this.title = title;
 		this.description = description;
+		this.image = image;
 		this.createdat = createdat;
 		this.updatedat = updatedat;
 		this.user = user;
 		this.plants = plants;
 	}
-
 	public Blog() {
 		super();
 	}
@@ -80,6 +82,13 @@ public class Blog {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
 	public LocalDateTime getCreatedat() {
 		return createdat;
