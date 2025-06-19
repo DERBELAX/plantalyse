@@ -47,6 +47,7 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/plants/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
+                .requestMatchers("/api/blogs/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
