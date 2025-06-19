@@ -13,7 +13,12 @@ import com.example.plantalysBackend.security.JwtAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import static org.springframework.security.config.Customizer.withDefaults;
+
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class SecurityConfig {
@@ -21,7 +26,7 @@ public class SecurityConfig {
 @Bean
 public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    config.addAllowedOrigin("http://localhost:3001"); 
+    config.addAllowedOrigin("http://localhost:3000"); 
     config.addAllowedMethod("*");
     config.addAllowedHeader("*");
     config.setAllowCredentials(true); //les cookies / sessions
@@ -41,6 +46,7 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/plants/**").permitAll()
+                .requestMatchers("/api/categories/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -52,9 +58,22 @@ public CorsConfigurationSource corsConfigurationSource() {
         return new BCryptPasswordEncoder();
     }
     @Bean
-    public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authManager(AuthenticationConfiguration config) 
+    	throws Exception {
         return config.getAuthenticationManager();
     }
-    
+    @Configuration
+    public class WebConfig implements WebMvcConfigurer {
+
+        @Value("${upload.path}")
+        private String uploadPath;
+
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            registry.addResourceHandler("/uploads/**")
+                    .addResourceLocations("file:" + uploadPath + "/");
+        }
+    }
+
 
 }

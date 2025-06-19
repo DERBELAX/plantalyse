@@ -30,7 +30,7 @@ public class PlantService {
         return plantRepository.findById(id).map(plant -> {
             plant.setName(updatedPlant.getName());
             plant.setDescription(updatedPlant.getDescription());
-            plant.setImage(updatedPlant.getImage());
+            plant.setImages(updatedPlant.getImages());
             plant.setPrice(updatedPlant.getPrice());
             plant.setStock(updatedPlant.getStock());
             return plantRepository.save(plant);
@@ -43,5 +43,11 @@ public class PlantService {
     public void deletePlant(Long id) {
         plantRepository.deleteById(id);
     }
+   
+
+    public List<Plant> getPlantsByCategoryId(Long categoryId) {
+        return plantRepository.findByCategoryId(categoryId);
+    }
+
 
 }

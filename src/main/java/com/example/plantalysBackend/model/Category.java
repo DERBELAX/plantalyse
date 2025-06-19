@@ -1,6 +1,8 @@
 package com.example.plantalysBackend.model;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,13 +18,16 @@ public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_category")    
-	private Long id_category;
-	    private String name;
-	    @OneToMany(mappedBy = "category")
-	    private List<Plant> plants;
-		public Category(Long id_category, String name, List<Plant> plants) {
+	private Long id;
+	private String name;
+	
+	@OneToMany(mappedBy = "category")
+	@JsonIgnore // Évite la boucle infinie lors de la sérialisation
+	private List<Plant> plants;
+	
+	public Category(Long id_category, String name, List<Plant> plants) {
 			super();
-			this.id_category = id_category;
+			this.id = id_category;
 			this.name = name;
 			this.plants = plants;
 		}
@@ -31,10 +36,10 @@ public class Category {
 		}
 	    
 		public Long getId_category() {
-			return id_category;
+			return id;
 		}
 		public void setId_category(Long id_category) {
-			this.id_category = id_category;
+			this.id = id_category;
 		}
 		public String getName() {
 			return name;

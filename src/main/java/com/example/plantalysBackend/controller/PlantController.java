@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.plantalysBackend.model.Plant;
 import com.example.plantalysBackend.service.PlantService;
 
@@ -48,5 +47,11 @@ public class PlantController {
 	    public void deletePlant(@PathVariable Long id) {
 	        plantService.deletePlant(id);
 	    }
+	    
+	    @GetMapping("/by-category/{id}")
+	    public List<Plant> getPlantsByCategory(@PathVariable Long id) {
+	        return plantService.getPlantsByCategoryId(id);
+	    }
+
 
 }

@@ -1,6 +1,9 @@
 package com.example.plantalysBackend.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +17,15 @@ import jakarta.persistence.JoinColumn;
 @Table(name = "plant")
 public class Plant {
 	 
+	public List<String> getImages() {
+		return images;
+	}
+
+
+	public void setImages(List<String> images) {
+		this.images = images;
+	}
+
 	@Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id_plante;
@@ -21,27 +33,41 @@ public class Plant {
 	    @Column(columnDefinition = "TEXT")
 	    private String description;
 
-	    private String image;
+	    @ElementCollection
+	    private List<String> images;
+
 	    private Double price;
 	    private String name;
 	    private Integer stock;
+	    @Column(columnDefinition = "TEXT")
+	    private String entretien;
+
+	    private Integer frequenceArrosage;
+
 
 	    @ManyToOne
 	    @JoinColumn(name = "id_category") 
 	    private Category category;
 
-		public Plant(Long id_plante, String description, String image, 
-				Double price, String name, 
-				Integer stock, Category category) {
+		
+
+		
+
+
+		public Plant(Long id_plante, String description, List<String> images, Double price, String name, Integer stock,
+				String entretien, Integer frequenceArrosage, Category category) {
 			super();
 			this.id_plante = id_plante;
 			this.description = description;
-			this.image = image;
+			this.images = images;
 			this.price = price;
 			this.name = name;
 			this.stock = stock;
+			this.entretien = entretien;
+			this.frequenceArrosage = frequenceArrosage;
 			this.category = category;
 		}
+
 
 		public Plant() {
 			super();
@@ -64,13 +90,7 @@ public class Plant {
 			this.description = description;
 		}
 
-		public String getImage() {
-			return image;
-		}
-
-		public void setImage(String image) {
-			this.image = image;
-		}
+		
 
 		public Double getPrice() {
 			return price;
@@ -103,6 +123,22 @@ public class Plant {
 		public void setCategory(Category category) {
 			this.category = category;
 		}
+		public String getEntretien() {
+		    return entretien;
+		}
+
+		public void setEntretien(String entretien) {
+		    this.entretien = entretien;
+		}
+
+		public Integer getFrequenceArrosage() {
+		    return frequenceArrosage;
+		}
+
+		public void setFrequenceArrosage(Integer frequenceArrosage) {
+		    this.frequenceArrosage = frequenceArrosage;
+		}
+
 
 
 }
