@@ -5,9 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.http.ResponseEntity;
+import com.example.plantalysBackend.dto.BlogDTO;
+import com.example.plantalysBackend.dto.PlantDTO;
 import com.example.plantalysBackend.repository.BlogRepository;
 import com.example.plantalysBackend.model.Blog;
 @RestController
@@ -21,5 +24,30 @@ public class BlogController {
     public List<Blog> getAll() {
         return blogRepository.findAll();
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBlogById(@PathVariable Long id) {
+        return blogRepository.findById(id)
+            .map(blog -> {
+            	List<PlantDTO> dtoPlants = blog.getPlants() != null
+            		    ? blog.getPlants().stream()
+            		        .map(p -> new PlantDTO(p.getId_plante(), p.getName(), p.getImages()))
+            		        .toList()
+            		    : List.of();
+
+                BlogDTO dto = new BlogDTO(
+                    blog.getId_blog(),
+                    blog.getTitle(),
+                    blog.getDescription(),
+                    blog.getImage(),
+                    blog.getCreatedat(),
+                    blog.getUpdatedat(),
+                    blog.getUser() != null ? blog.getUser().getEmail() : null,
+                    dtoPlants
+                );
+                return ResponseEntity.ok(dto);
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
 }

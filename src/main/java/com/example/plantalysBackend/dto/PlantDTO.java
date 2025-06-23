@@ -1,12 +1,18 @@
 package com.example.plantalysBackend.dto;
 
-public class PlantDTO {
-    private Long id_plante;
-    private String name;
+import java.util.List;
 
-    public PlantDTO(Long id_plante, String name) {
+public class PlantDTO {
+   
+
+	private Long id_plante;
+    private String name;
+    private String mainImage;
+
+    public PlantDTO(Long id_plante, String name, List<String> images) {
         this.id_plante = id_plante;
         this.name = name;
+        this.mainImage = (images != null && !images.isEmpty()) ? images.get(0) : null;
     }
 
     public Long getId_plante() {
@@ -16,4 +22,20 @@ public class PlantDTO {
     public String getName() {
         return name;
     }
+
+    public String getMainImage() {
+        return mainImage;
+    }
+    public void setId_plante(Long id_plante) {
+		this.id_plante = id_plante;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setMainImage(String mainImage) {
+		this.mainImage = mainImage;
+	}
+    
 }
