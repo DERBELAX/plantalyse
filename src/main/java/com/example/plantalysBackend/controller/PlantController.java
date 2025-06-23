@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.plantalysBackend.model.Plant;
 import com.example.plantalysBackend.service.PlantService;
-
+import com.example.plantalysBackend.repository.PlantRepository;
 @RestController
 @RequestMapping("/api/plants")
 @CrossOrigin(origins = "*")
 public class PlantController {
 	   @Autowired
 	    private PlantService plantService;
-
+	   @Autowired
+	    private PlantRepository plantRepository;
 	    @GetMapping
 	    public List<Plant> getAllPlants() {
 	        return plantService.getAllPlants();
@@ -52,6 +53,12 @@ public class PlantController {
 	    public List<Plant> getPlantsByCategory(@PathVariable Long id) {
 	        return plantService.getPlantsByCategoryId(id);
 	    }
+	    
+	    @GetMapping("/top")
+	    public List<Plant> getTopPlants() {
+	        return plantRepository.findTopSellingPlants(3); // top 3 ventes
+	    }
+
 
 
 }
