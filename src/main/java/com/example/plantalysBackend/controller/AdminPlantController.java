@@ -1,10 +1,12 @@
 package com.example.plantalysBackend.controller;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,7 @@ import com.example.plantalysBackend.service.PlantService;
 @RestController
 @RequestMapping("/api/admin/plants")
 @PreAuthorize("hasRole('ADMIN')")
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 public class AdminPlantController {
 
     @Autowired
@@ -51,23 +53,21 @@ public class AdminPlantController {
             @RequestParam Long categoryId,
             @RequestParam String entretien,
             @RequestParam Integer frequenceArrosage,
-
-            @RequestParam("images") List<MultipartFile> images) {
+            @RequestParam("images") MultipartFile[] images
+    ) {
         try {
-        	 List<String> imagePaths = new ArrayList<>();
+            List<String> imagePaths = new ArrayList<>();
 
-             for (MultipartFile image : images) {
-                 String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-                 Path filepath = Paths.get(uploadPath, filename);
-                 Files.copy(image.getInputStream(), filepath);
-                 imagePaths.add("/uploads/" + filename); // Exemple de chemin public
-             }
+            for (MultipartFile image : images) {
+                String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+                Path filepath = Paths.get(uploadPath, filename);
+                Files.copy(image.getInputStream(), filepath);
+                imagePaths.add("/uploads/" + filename);
+            }
 
-            // Récupération de la catégorie
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
 
-            // Création et sauvegarde de la plante
             Plant plant = new Plant();
             plant.setName(name);
             plant.setDescription(description);
@@ -75,7 +75,6 @@ public class AdminPlantController {
             plant.setStock(stock);
             plant.setEntretien(entretien);
             plant.setFrequenceArrosage(frequenceArrosage);
-            //plant.setImage("/uploads/" + filename); // Accessible en front
             plant.setCategory(category);
             plant.setImages(imagePaths);
 
@@ -84,9 +83,11 @@ public class AdminPlantController {
             return ResponseEntity.ok().build();
 
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'enregistrement de l'image : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur lors de l'enregistrement de l'image : " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur : " + e.getMessage());
         }
     }
 
@@ -100,8 +101,8 @@ public class AdminPlantController {
             @RequestParam Long categoryId,
             @RequestParam String entretien,
             @RequestParam Integer frequenceArrosage,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images
-      ) {
+            @RequestParam(value = "images", required = false) MultipartFile[] images
+    ) {
         try {
             Plant existingPlant = plantRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Plante introuvable"));
@@ -112,30 +113,38 @@ public class AdminPlantController {
             existingPlant.setStock(stock);
             existingPlant.setEntretien(entretien);
             existingPlant.setFrequenceArrosage(frequenceArrosage);
+
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
             existingPlant.setCategory(category);
 
-            // Si de nouvelles images sont envoyées, on les remplace
-            if (images != null && !images.isEmpty()) {
-                List<String> imagePaths = new ArrayList<>();
+            // Ajout des nouvelles images sans supprimer les anciennes
+            if (images != null && images.length > 0) {
+                List<String> imagePaths = existingPlant.getImages() != null
+                        ? new ArrayList<>(existingPlant.getImages())
+                        : new ArrayList<>();
+
                 for (MultipartFile image : images) {
                     String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
                     Path filepath = Paths.get(uploadPath, filename);
                     Files.copy(image.getInputStream(), filepath);
                     imagePaths.add("/uploads/" + filename);
                 }
+
                 existingPlant.setImages(imagePaths);
             }
 
             plantRepository.save(existingPlant);
             return ResponseEntity.ok("Plante mise à jour");
 
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur d'upload image : " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erreur : " + e.getMessage());
         }
     }
-
 
     @DeleteMapping("/{id}")
     public void deletePlant(@PathVariable Long id) {

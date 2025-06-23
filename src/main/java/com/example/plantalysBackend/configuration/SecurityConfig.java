@@ -15,7 +15,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +47,9 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .requestMatchers("/api/plants/**").permitAll()
                 .requestMatchers("/api/categories/**").permitAll()
                 .requestMatchers("/api/blogs/**").permitAll()
+                .requestMatchers("/api/contact").permitAll()
+
+                .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -64,15 +66,16 @@ public CorsConfigurationSource corsConfigurationSource() {
         return config.getAuthenticationManager();
     }
     @Configuration
-    public class WebConfig implements WebMvcConfigurer {
+    public class WebMvcConfig implements WebMvcConfigurer {
 
         @Value("${upload.path}")
         private String uploadPath;
 
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
-            registry.addResourceHandler("/uploads/**")
-                    .addResourceLocations("file:" + uploadPath + "/");
+            registry
+                .addResourceHandler("/uploads/**")
+                .addResourceLocations("file:" + uploadPath + "/");
         }
     }
 
