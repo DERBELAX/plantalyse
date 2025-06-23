@@ -2,6 +2,8 @@ package com.example.plantalysBackend.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -11,19 +13,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 
 
 @Entity
 @Table(name = "plant")
 public class Plant {
-	 
-	public List<String> getImages() {
-		return images;
+
+
+	public List<Blog> getBlogs() {
+		return blogs;
 	}
 
 
-	public void setImages(List<String> images) {
-		this.images = images;
+	public void setBlogs(List<Blog> blogs) {
+		this.blogs = blogs;
 	}
 
 	@Id
@@ -49,13 +53,26 @@ public class Plant {
 	    @JoinColumn(name = "id_category") 
 	    private Category category;
 
-		
+		 
+		public List<String> getImages() {
+			return images;
+		}
+
+
+		public void setImages(List<String> images) {
+			this.images = images;
+		}
+
+	    @ManyToMany(mappedBy = "plants")
+	    @JsonIgnore
+	    private List<Blog> blogs;
+
 
 		
 
 
 		public Plant(Long id_plante, String description, List<String> images, Double price, String name, Integer stock,
-				String entretien, Integer frequenceArrosage, Category category) {
+				String entretien, Integer frequenceArrosage, Category category, List<Blog> blogs) {
 			super();
 			this.id_plante = id_plante;
 			this.description = description;
@@ -66,6 +83,7 @@ public class Plant {
 			this.entretien = entretien;
 			this.frequenceArrosage = frequenceArrosage;
 			this.category = category;
+			this.blogs = blogs;
 		}
 
 

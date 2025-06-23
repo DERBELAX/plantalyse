@@ -1,6 +1,7 @@
 package com.example.plantalysBackend.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -40,7 +41,7 @@ public class Blog {
         joinColumns = @JoinColumn(name = "id_blog"),
         inverseJoinColumns = @JoinColumn(name = "id_plante")
     )
-    private List<Plant> plants;
+    private List<Plant> plants = new ArrayList<>();
 
 	
 

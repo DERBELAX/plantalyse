@@ -6,20 +6,20 @@ import com.example.plantalysBackend.model.User;
 import com.example.plantalysBackend.repository.BlogRepository;
 import com.example.plantalysBackend.repository.PlantRepository;
 import com.example.plantalysBackend.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.example.plantalysBackend.dto.PlantDTO;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 @RestController
@@ -42,7 +42,36 @@ public class AdminBlogController {
 
     @GetMapping
     public ResponseEntity<?> getAllBlogs() {
-        return ResponseEntity.ok(blogRepository.findAll());
+        List<Blog> blogs = blogRepository.findAll();
+
+        List<Map<String, Object>> response = blogs.stream().map(blog -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id_blog", blog.getId_blog());
+            map.put("title", blog.getTitle());
+            map.put("description", blog.getDescription());
+            map.put("image", blog.getImage());
+            map.put("createdat", blog.getCreatedat());
+            map.put("updatedat", blog.getUpdatedat());
+
+            // User (éviter boucle infinie aussi)
+            if (blog.getUser() != null) {
+                Map<String, Object> userMap = new HashMap<>();
+                userMap.put("email", blog.getUser().getEmail());
+                map.put("user", userMap);
+            }
+
+            // Plantes liées (noms uniquement)
+            List<PlantDTO> plants = blog.getPlants() != null
+                ? blog.getPlants().stream()
+                    .map(p -> new PlantDTO(p.getId_plante(), p.getName()))
+                    .toList()
+                : List.of();
+            map.put("plants", plants);
+
+            return map;
+        }).toList();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
@@ -72,7 +101,7 @@ public class AdminBlogController {
         }
         blog.setUser(user);
 
-        // Upload de l’image
+        // Upload l’image
         if (image != null && !image.isEmpty()) {
             try {
                 String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
