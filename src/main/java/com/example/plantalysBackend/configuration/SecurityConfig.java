@@ -48,7 +48,8 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .requestMatchers("/api/categories/**").permitAll()
                 .requestMatchers("/api/blogs/**").permitAll()
                 .requestMatchers("/api/contact").permitAll()
-
+                .requestMatchers("/api/orders/from-cart").authenticated()
+                .requestMatchers("/api/orders/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )

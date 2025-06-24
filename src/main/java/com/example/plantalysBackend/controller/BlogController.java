@@ -30,7 +30,7 @@ public class BlogController {
             .map(blog -> {
             	List<PlantDTO> dtoPlants = blog.getPlants() != null
             		    ? blog.getPlants().stream()
-            		        .map(p -> new PlantDTO(p.getId_plante(), p.getName(), p.getImages()))
+            		        .map(p -> new PlantDTO(p.getId(), p.getName(), p.getImages()))
             		        .toList()
             		    : List.of();
 

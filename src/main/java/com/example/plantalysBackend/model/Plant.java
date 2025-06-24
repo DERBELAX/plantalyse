@@ -32,8 +32,8 @@ public class Plant {
 
 	@Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Long id_plante;
-
+	    @Column(name = "id_plante")    
+	    private Long id;
 	    @Column(columnDefinition = "TEXT")
 	    private String description;
 
@@ -71,10 +71,10 @@ public class Plant {
 		
 
 
-		public Plant(Long id_plante, String description, List<String> images, Double price, String name, Integer stock,
+		public Plant(Long id, String description, List<String> images, Double price, String name, Integer stock,
 				String entretien, Integer frequenceArrosage, Category category, List<Blog> blogs) {
 			super();
-			this.id_plante = id_plante;
+			this.id = id;
 			this.description = description;
 			this.images = images;
 			this.price = price;
@@ -92,12 +92,12 @@ public class Plant {
 		}
 		
 		
-		public Long getId_plante() {
-			return id_plante;
+		public Long getId() {
+			return id;
 		}
 
-		public void setId_plante(Long id_plante) {
-			this.id_plante = id_plante;
+		public void setId(Long id) {
+			this.id = id;
 		}
 
 		public String getDescription() {

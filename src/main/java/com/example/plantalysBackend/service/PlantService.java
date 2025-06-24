@@ -35,7 +35,7 @@ public class PlantService {
             plant.setStock(updatedPlant.getStock());
             return plantRepository.save(plant);
         }).orElseGet(() -> {
-            updatedPlant.setId_plante(id);
+            updatedPlant.setId(id);
             return plantRepository.save(updatedPlant);
         });
     }

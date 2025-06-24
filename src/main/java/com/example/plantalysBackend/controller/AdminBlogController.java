@@ -63,7 +63,7 @@ public class AdminBlogController {
             // Plantes liées (noms uniquement)
             List<PlantDTO> plants = blog.getPlants() != null
             	    ? blog.getPlants().stream()
-            	        .map(p -> new PlantDTO(p.getId_plante(), p.getName(), p.getImages()))
+            	        .map(p -> new PlantDTO(p.getId(), p.getName(), p.getImages()))
             	        .toList()
             	    : List.of();
 
