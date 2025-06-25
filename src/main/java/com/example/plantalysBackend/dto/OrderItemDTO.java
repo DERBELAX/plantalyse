@@ -2,11 +2,12 @@ package com.example.plantalysBackend.dto;
 
 public class OrderItemDTO {
 	
+	
 	private Long id;
     private String plantName;
     private String plantImage;
     private int quantity;
-    private double unitPrice;
+    private double unite_price;
 	public Long getId() {
 		return id;
 	}
@@ -31,11 +32,22 @@ public class OrderItemDTO {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	public double getUnitPrice() {
-		return unitPrice;
+	public double getUnite_price() {
+		return unite_price;
 	}
-	public void setUnitPrice(double unitPrice) {
-		this.unitPrice = unitPrice;
+	public void setUnite_price(double unite_price) {
+		this.unite_price = unite_price;
+	}
+	public OrderItemDTO(Long id, String plantName, String plantImage, int quantity, double unite_price) {
+		super();
+		this.id = id;
+		this.plantName = plantName;
+		this.plantImage = plantImage;
+		this.quantity = quantity;
+		this.unite_price = unite_price;
+	}
+	public OrderItemDTO() {
+		super();
 	}
 	
     

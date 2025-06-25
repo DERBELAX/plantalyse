@@ -109,7 +109,7 @@ public class OrderController {
         	if (itemDTO.getId() == null) {
                 return ResponseEntity.badRequest().body("ID de plante manquant.");
             }
-        	if (itemDTO.getQuantity() <= 0 || itemDTO.getUnitPrice() <= 0) {
+        	if (itemDTO.getQuantity() <= 0 || itemDTO.getUnite_price() <= 0) {
                 return ResponseEntity.badRequest()
                     .body("Quantité ou prix invalide pour l'article ID : " + itemDTO.getId());
             }
@@ -124,7 +124,7 @@ public class OrderController {
             orderItem.setOrder(order);
             orderItem.setPlant(plantOpt.get());
             orderItem.setQuantity(itemDTO.getQuantity());
-            orderItem.setUnite_price(itemDTO.getUnitPrice());
+            orderItem.setUnite_price(itemDTO.getUnite_price());
 
             items.add(orderItem);
         }
@@ -144,7 +144,7 @@ public class OrderController {
             dto.setId(item.getPlant().getId());
             dto.setPlantName(item.getPlant().getName());
             dto.setQuantity(item.getQuantity());
-            dto.setUnitPrice(item.getUnite_price());
+            dto.setUnite_price(item.getUnite_price());
             responseItems.add(dto);
         }
 
