@@ -50,6 +50,7 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .requestMatchers("/api/contact").permitAll()
                 .requestMatchers("/api/orders/from-cart").authenticated()
                 .requestMatchers("/api/orders/**").permitAll()
+                .requestMatchers("/api/reviews/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
