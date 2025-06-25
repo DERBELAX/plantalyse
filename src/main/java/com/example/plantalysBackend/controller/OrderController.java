@@ -1,22 +1,18 @@
 package com.example.plantalysBackend.controller;
-
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import com.example.plantalysBackend.dto.OrderItemDTO;
 import com.example.plantalysBackend.dto.OrderResponseDTO;
 import com.example.plantalysBackend.model.Order;
 import com.example.plantalysBackend.model.OrderItem;
 import com.example.plantalysBackend.model.Plant;
 import com.example.plantalysBackend.model.User;
-import com.example.plantalysBackend.repository.OrderRepository;
 import com.example.plantalysBackend.repository.PlantRepository;
 import com.example.plantalysBackend.repository.UserRepository;
 import com.example.plantalysBackend.service.OrderService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +25,6 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderRepository orderRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -47,13 +40,9 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getOrderById(@PathVariable Long id) {
         Optional<Order> optionalOrder = orderService.getOrderById(id);
-        if (optionalOrder.isPresent()) {
-            return ResponseEntity.ok(optionalOrder.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Commande non trouvée");
-        }
+        return optionalOrder.<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Commande non trouvée"));
     }
-
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
@@ -93,7 +82,6 @@ public class OrderController {
 
         String email = principal.getName();
         User user = userRepository.findByEmail(email);
-
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur introuvable.");
         }
@@ -104,20 +92,20 @@ public class OrderController {
         order.setUser(user);
 
         List<OrderItem> items = new ArrayList<>();
-
         for (OrderItemDTO itemDTO : cartItems) {
-        	if (itemDTO.getId() == null) {
+            if (itemDTO.getId() == null) {
                 return ResponseEntity.badRequest().body("ID de plante manquant.");
             }
-        	if (itemDTO.getQuantity() <= 0 || itemDTO.getUnite_price() <= 0) {
+
+            if (itemDTO.getQuantity() <= 0 || itemDTO.getUnite_price() <= 0) {
                 return ResponseEntity.badRequest()
-                    .body("Quantité ou prix invalide pour l'article ID : " + itemDTO.getId());
+                        .body("Quantité ou prix invalide pour l'article ID : " + itemDTO.getId());
             }
 
             Optional<Plant> plantOpt = plantRepository.findById(itemDTO.getId());
             if (plantOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Plante introuvable pour l'ID : " + itemDTO.getId());
+                        .body("Plante introuvable pour l'ID : " + itemDTO.getId());
             }
 
             OrderItem orderItem = new OrderItem();
@@ -130,9 +118,11 @@ public class OrderController {
         }
 
         order.setItems(items);
-        Order savedOrder = orderRepository.save(order);
 
-        // Construire la réponse DTO
+        // Appel du service qui génère aussi les rappels d’arrosage
+        Order savedOrder = orderService.createOrder(order);
+
+        // Construction de la réponse DTO
         OrderResponseDTO responseDTO = new OrderResponseDTO();
         responseDTO.setOrderId(savedOrder.getId());
         responseDTO.setStatus(savedOrder.getStatus());
@@ -151,5 +141,4 @@ public class OrderController {
         responseDTO.setItems(responseItems);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
-
 }
