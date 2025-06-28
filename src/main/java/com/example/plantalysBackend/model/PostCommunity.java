@@ -1,97 +1,138 @@
 package com.example.plantalysBackend.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "post_community")
 public class PostCommunity {
-	
+
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_post_community;
+    @Column(name = "id_post_community")
+    private Long idPostCommunity;
 
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private LocalDateTime createdat;
+    @Column(name = "createdat") 
+    private LocalDateTime createdAt;
 
     private String image;
 
     @ManyToOne
     @JoinColumn(name = "id_user")
+    
     private User user;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    
+    private List<CommentCommunity> comments;
 
-	public PostCommunity(Long id_post_community, String title, String description, LocalDateTime createdat,
-			String image, User user) {
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    private List<LikeCommunity> likes;
+
+    public PostCommunity() {}
+
+    public List<CommentCommunity> getComments() {
+		return comments;
+	}
+
+
+
+	public void setComments(List<CommentCommunity> comments) {
+		this.comments = comments;
+	}
+
+
+
+	public List<LikeCommunity> getLikes() {
+		return likes;
+	}
+
+
+
+	public void setLikes(List<LikeCommunity> likes) {
+		this.likes = likes;
+	}
+
+    public PostCommunity(Long idPostCommunity, String title, String description, LocalDateTime createdAt, String image,
+			User user, List<CommentCommunity> comments, List<LikeCommunity> likes) {
 		super();
-		this.id_post_community = id_post_community;
+		this.idPostCommunity = idPostCommunity;
 		this.title = title;
 		this.description = description;
-		this.createdat = createdat;
+		this.createdAt = createdAt;
 		this.image = image;
 		this.user = user;
+		this.comments = comments;
+		this.likes = likes;
 	}
 
-	public PostCommunity() {
-		super();
-	}
-	public Long getId_post_community() {
-		return id_post_community;
-	}
 
-	public void setId_post_community(Long id_post_community) {
-		this.id_post_community = id_post_community;
-	}
 
-	public String getTitle() {
-		return title;
-	}
+	public Long getIdPostCommunity() {
+        return idPostCommunity;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setIdPostCommunity(Long idPostCommunity) {
+        this.idPostCommunity = idPostCommunity;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public LocalDateTime getCreatedat() {
-		return createdat;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setCreatedat(LocalDateTime createdat) {
-		this.createdat = createdat;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getImage() {
-		return image;
-	}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-	public void setImage(String image) {
-		this.image = image;
-	}
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public String getImage() {
+        return image;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public int getLikeCount() {
+        return likes != null ? likes.size() : 0;
+    }
 
 }

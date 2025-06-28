@@ -17,17 +17,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.plantalysBackend.model.User;
+import com.example.plantalysBackend.repository.UserRepository;
+
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         return path.matches("^/api/(auth|contact)(/.*)?$");
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -37,14 +43,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (jwt != null && jwtTokenUtil.validateToken(jwt)) {
             String email = jwtTokenUtil.getEmail(jwt);
+            User user = userRepository.findByEmail(email);
 
-            var roles = jwtTokenUtil.getRoles(jwt).stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.trim()))
-                    .collect(Collectors.toList());
+            if (user != null) {
+                UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-            var authentication = new UsernamePasswordAuthenticationToken(email, null, roles);
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
 
         chain.doFilter(request, response);
@@ -58,3 +68,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 }
+

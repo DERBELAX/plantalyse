@@ -20,3 +20,14 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
+
+  backend:
+    build: .
+    depends_on:
+      - mysql
+    ports:
+      - "8085:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/plantelys
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: secret

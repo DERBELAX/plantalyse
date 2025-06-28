@@ -52,6 +52,10 @@ public CorsConfigurationSource corsConfigurationSource() {
                 .requestMatchers("/api/orders/**").permitAll()
                 .requestMatchers("/api/reviews/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/api/community/**").authenticated()
+               
+
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
