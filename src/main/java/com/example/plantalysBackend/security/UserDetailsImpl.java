@@ -2,10 +2,12 @@ package com.example.plantalysBackend.security;
 
 import com.example.plantalysBackend.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -21,8 +23,9 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Ou extraire les rôles si utilisés
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRoles()));
     }
+
 
     @Override
     public String getPassword() {

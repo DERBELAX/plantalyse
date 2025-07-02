@@ -14,6 +14,8 @@ public class WateringReminderScheduler {
 
     @Autowired
     private WateringReminderRepository wateringreminderRepo; 
+    @Autowired
+    private EmailService emailService;
 
     // Exécuté tous les jours à 8h du matin
     @Scheduled(cron = "0 0 8 * * *")
@@ -25,9 +27,12 @@ public class WateringReminderScheduler {
                 .toList();
 
         for (WateringReminder reminder : dueReminders) {
-            System.out.printf("Rappel d’arrosage pour %s (%s)%n",
-                    reminder.getPlant().getName(),
-                    reminder.getUser().getEmail());
+            String email = reminder.getUser().getEmail();
+            String name = reminder.getUser().getFirstname();
+            String plant = reminder.getPlant().getName();
+
+            // Envoi du mail
+            emailService.sendWateringReminder(email, plant, name);
 
             // Replanifie le prochain rappel
             int interval = 7 / reminder.getFrequencyPerWeek();

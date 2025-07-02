@@ -2,6 +2,7 @@ package com.example.plantalysBackend.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -51,6 +52,7 @@ public class Plant {
 
 	    @ManyToOne
 	    @JoinColumn(name = "id_category") 
+	    @JsonBackReference
 	    private Category category;
 
 		 

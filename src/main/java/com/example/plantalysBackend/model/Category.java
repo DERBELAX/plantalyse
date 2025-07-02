@@ -2,6 +2,7 @@ package com.example.plantalysBackend.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +23,7 @@ public class Category {
 	private String name;
 	
 	@OneToMany(mappedBy = "category")
-	@JsonIgnore // Évite la boucle infinie lors de la sérialisation
+	@JsonManagedReference
 	private List<Plant> plants;
 	
 	public Category(Long id_category, String name, List<Plant> plants) {

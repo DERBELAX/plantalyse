@@ -1,10 +1,12 @@
 package com.example.plantalysBackend.security;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
@@ -23,17 +25,16 @@ public class JwtTokenUtil {
 
     @PostConstruct
     public void init() {
-        // Vérifie que la clé est suffisamment longue pour HS512 (≥ 64 bytes)
         if (jwtSecret.length() < 64) {
             throw new IllegalArgumentException("jwt.secret must be at least 64 characters for HS512");
         }
         secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(String email, List<String> roles) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("roles", roles)
+                .claim("roles", List.of(role))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
@@ -74,7 +75,6 @@ public class JwtTokenUtil {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-           
             return false;
         }
     }

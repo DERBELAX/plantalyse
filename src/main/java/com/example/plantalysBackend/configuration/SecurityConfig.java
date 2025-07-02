@@ -41,23 +41,25 @@ public CorsConfigurationSource corsConfigurationSource() {
         	.csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/plants/**").permitAll()
-                .requestMatchers("/api/categories/**").permitAll()
-                .requestMatchers("/api/blogs/**").permitAll()
-                .requestMatchers("/api/contact").permitAll()
-                .requestMatchers("/api/orders/from-cart").authenticated()
-                .requestMatchers("/api/orders/**").permitAll()
-                .requestMatchers("/api/reviews/**").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
-                .requestMatchers("/api/community/**").authenticated()
-               
+            	    .requestMatchers("/api/auth/**").permitAll()
+            	    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            	    .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+            	    .requestMatchers("/api/plants/**").permitAll()
+            	    .requestMatchers("/api/categories/**").permitAll()
+            	    .requestMatchers("/api/blogs/**").permitAll()
+            	    .requestMatchers("/api/contact").permitAll()
+            	    .requestMatchers("/api/orders/from-cart").authenticated()
+            	    .requestMatchers("/api/orders/**").permitAll()
+            	    .requestMatchers("/api/reviews/**").permitAll()
+            	    .requestMatchers("/uploads/**").permitAll()
+            	    .requestMatchers("/api/community/posts", "/api/community/posts/**").permitAll()
+            	    .requestMatchers("/api/community/comments", "/api/community/comments/**").authenticated()
+            	    .requestMatchers("/api/community/likes", "/api/community/likes/**").authenticated()
+            	    .requestMatchers("/api/community/**").authenticated() // cette ligne doit être en dernier parmi /community
 
+            	    .anyRequest().authenticated()
+            	)
 
-                .anyRequest().authenticated()
-            )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
