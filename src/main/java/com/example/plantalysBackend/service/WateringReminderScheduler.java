@@ -18,7 +18,7 @@ public class WateringReminderScheduler {
     private EmailService emailService;
 
     // Exécuté tous les jours à 8h du matin
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 0 9 * * *")
     public void sendDailyReminders() {
         LocalDateTime now = LocalDateTime.now();
         
