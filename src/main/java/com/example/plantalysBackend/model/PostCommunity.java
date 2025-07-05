@@ -3,6 +3,8 @@ package com.example.plantalysBackend.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,10 +38,10 @@ public class PostCommunity {
 
     @ManyToOne
     @JoinColumn(name = "id_user")
-    
+    @JsonIgnore
     private User user;
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CommentCommunity> comments;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)

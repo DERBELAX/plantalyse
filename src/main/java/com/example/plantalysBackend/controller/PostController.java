@@ -76,10 +76,13 @@ public class PostController {
             List<CommentResponseDTO> comments = post.getComments().stream()
                 .map(c -> new CommentResponseDTO(
                     c.getId(),
-                    c.getUser().getFirstname(),
+                    c.getUser() != null ? c.getUser().getFirstname() : "Utilisateur supprimé",
                     c.getContent(),
                     c.getCreatedAt()
                 )).toList();
+
+            String firstname = post.getUser() != null ? post.getUser().getFirstname() : "Utilisateur";
+            String lastname = post.getUser() != null ? post.getUser().getLastname() : "supprimé";
 
             return new PostResponseDTO(
                 post.getIdPostCommunity(), 
@@ -87,8 +90,8 @@ public class PostController {
                 post.getDescription(),
                 post.getImage(),
                 post.getCreatedAt(),
-                post.getUser().getFirstname(),
-                post.getUser().getLastname(),
+                firstname,
+                lastname,
                 post.getLikes() != null ? post.getLikes().size() : 0,
                 comments
             );
@@ -96,6 +99,6 @@ public class PostController {
 
         return ResponseEntity.ok(response);
     }
-    
+
 
 }

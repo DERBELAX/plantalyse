@@ -9,8 +9,10 @@ import com.example.plantalysBackend.repository.ReviewRepository;
 import com.example.plantalysBackend.repository.OrderRepository;
 import com.example.plantalysBackend.repository.PlantRepository;
 import com.example.plantalysBackend.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +31,6 @@ public class ReviewService {
         Plant plant = plantRepo.findById(dto.getPlantId())
             .orElseThrow(() -> new IllegalArgumentException("Plante introuvable."));
 
-        // Vérifie si l’utilisateur a acheté la plante
         boolean hasPurchased = orderRepo.existsByUserAndItemsPlantId(user, plant.getId());
         if (!hasPurchased) {
             throw new IllegalStateException("Vous devez avoir acheté cette plante pour laisser un avis.");
@@ -46,28 +47,14 @@ public class ReviewService {
     }
 
     public List<ReviewResponseDTO> getReviewsByPlant(Long plantId) {
-        return reviewRepo.findByPlantId(plantId).stream().map(review -> {
-            ReviewResponseDTO dto = new ReviewResponseDTO();
-            dto.setUserName((review.getUser().getFirstname() + " " + review.getUser().getLastname()).trim());
-            dto.setUserEmail(review.getUser().getEmail());
-            dto.setContent(review.getContent());
-            dto.setRating(review.getRating());
-            dto.setCreatedAt(review.getCreatedAt());
-            return dto;
-        }).collect(Collectors.toList());
+        return reviewRepo.findByPlantId(plantId).stream()
+            .map(ReviewResponseDTO::new)
+            .collect(Collectors.toList());
     }
+
     public List<ReviewResponseDTO> getAllReviews() {
-        return reviewRepo.findAll().stream().map(review -> {
-            ReviewResponseDTO dto = new ReviewResponseDTO();
-            dto.setUserName((review.getUser().getFirstname() + " " + review.getUser().getLastname()).trim());
-            dto.setUserEmail(review.getUser().getEmail());
-            dto.setContent(review.getContent());
-            dto.setRating(review.getRating());
-            dto.setCreatedAt(review.getCreatedAt());
-            return dto;
-        }).collect(Collectors.toList());
+        return reviewRepo.findAll().stream()
+            .map(ReviewResponseDTO::new)
+            .collect(Collectors.toList());
     }
-
 }
-
-

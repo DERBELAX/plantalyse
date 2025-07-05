@@ -3,8 +3,11 @@ package com.example.plantalysBackend.controller;
 import com.example.plantalysBackend.dto.OrderDTO;
 import com.example.plantalysBackend.dto.OrderItemDTO;
 import com.example.plantalysBackend.model.Order;
+import com.example.plantalysBackend.model.Plant;
 import com.example.plantalysBackend.model.User;
 import com.example.plantalysBackend.repository.OrderRepository;
+import com.example.plantalysBackend.repository.PlantRepository;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +24,8 @@ public class AdminOrderController {
 
     @Autowired
     private OrderRepository orderRepository;
-
+    @Autowired
+    private PlantRepository plantRepository;
     // Récupérer toutes les commandes
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -94,4 +98,11 @@ public class AdminOrderController {
         order.setStatus("Validée"); 
         return ResponseEntity.ok(order);
     }
+    
+    @GetMapping("/admin/stock")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Plant>> getAllStocks() {
+        return ResponseEntity.ok(plantRepository.findAll());
+    }
+
 }

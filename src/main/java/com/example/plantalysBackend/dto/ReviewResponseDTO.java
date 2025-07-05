@@ -2,7 +2,9 @@ package com.example.plantalysBackend.dto;
 
 import java.time.LocalDateTime;
 
-public class ReviewResponseDTO {
+import com.example.plantalysBackend.model.Review;
+
+public class ReviewResponseDTO{
     private String userName;
     private String userEmail;
     private String content;
@@ -48,6 +50,19 @@ public class ReviewResponseDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+    public ReviewResponseDTO(Review review) {
+        if (review.getUser() != null) {
+            this.userName = review.getUser().getFirstname() + " " + review.getUser().getLastname();
+            this.userEmail = review.getUser().getEmail();
+        } else {
+            this.userName = "Utilisateur supprimé";
+            this.userEmail = "Inconnu";
+        }
+
+        this.content = review.getContent();
+        this.rating = review.getRating();
+        this.createdAt = review.getCreatedAt();
     }
 }
 

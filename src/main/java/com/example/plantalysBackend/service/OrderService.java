@@ -34,11 +34,21 @@ public class OrderService {
             Plant plant = item.getPlant();
             System.out.println("Traitement item pour plante : " + (plant != null ? plant.getName() : "null"));
 
+            // Vérifie la quantité disponible en stock
+            int currentStock = plant.getStock();
+            if (currentStock < item.getQuantity()) {
+                throw new IllegalStateException("Stock insuffisant pour la plante : " + plant.getName());
+            }
+
+            // Diminue le stock
+            plant.setStock(currentStock - item.getQuantity());
+            
+            //Géneration des rappels d'arrosage
             Integer freq = plant.getFrequenceArrosage();
 
             if (freq == null || freq <= 0) continue;
 
-            int intervalDays = 7 / freq; // Ex: 3 fois/semaine → rappel tous les 2 jours
+            int intervalDays = 7 / freq; 
 
             for (int i = 0; i < freq; i++) {
                 WateringReminder reminder = new WateringReminder();
