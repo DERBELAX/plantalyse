@@ -1,11 +1,13 @@
 package com.example.plantalysBackend.controller;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.example.plantalysBackend.model.User;
 import com.example.plantalysBackend.repository.UserRepository;
 import com.example.plantalysBackend.security.JwtTokenUtil;
+import com.example.plantalysBackend.security.UserDetailsImpl;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -43,9 +45,23 @@ public class AuthController {
             throw new RuntimeException("Email ou mot de passe invalide");
         }
 
-        String role = user.getRoles(); 
-        String token = jwtTokenUtil.generateToken(email, role);
+        System.out.println("Nom utilisateur: " + user.getFirstname()); 
+
+        String token = jwtTokenUtil.generateToken(user);
+        //String token = jwtTokenUtil.generateToken(email, role);
+        System.out.println("Token généré: " + token); 
 
         return Map.of("token", token);
     }
+
+    
+
+    @GetMapping("/me")
+    public User getCurrentUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        user.setPassword(null); 
+        return user;
+        
+    }
+
 }

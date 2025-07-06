@@ -7,6 +7,8 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.example.plantalysBackend.model.User;
+
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
@@ -31,15 +33,22 @@ public class JwtTokenUtil {
         secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(String email, String role) {
+    
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(email)
-                .claim("roles", List.of(role))
+                .setSubject(user.getEmail())
+                .claim("id", user.getId_user())
+                .claim("firstname", user.getFirstname())
+                .claim("email", user.getEmail())
+                .claim("roles", List.of(user.getRoles()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
+
+    
+    
 
     public String getEmail(String token) {
         return Jwts.parserBuilder()
