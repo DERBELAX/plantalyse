@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.plantalysBackend.dto.OrderDTO;
 import com.example.plantalysBackend.dto.OrderItemDTO;
 import com.example.plantalysBackend.dto.OrderResponseDTO;
 import com.example.plantalysBackend.model.Order;
@@ -69,7 +71,6 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
     @PostMapping("/from-cart")
     public ResponseEntity<?> createOrderFromCart(@RequestBody List<OrderItemDTO> cartItems, Principal principal) {
         if (principal == null) {
@@ -119,26 +120,57 @@ public class OrderController {
 
         order.setItems(items);
 
-        // Appel du service qui génère aussi les rappels d’arrosage
-        Order savedOrder = orderService.createOrder(order);
+        try {
+            // Appel du service qui vérifie le stock, diminue, sauvegarde, crée rappels
+            Order savedOrder = orderService.createOrder(order);
 
-        // Construction de la réponse DTO
-        OrderResponseDTO responseDTO = new OrderResponseDTO();
-        responseDTO.setOrderId(savedOrder.getId());
-        responseDTO.setStatus(savedOrder.getStatus());
-        responseDTO.setCreatedAt(savedOrder.getCreatedat());
+            // Construction de la réponse DTO
+            OrderResponseDTO responseDTO = new OrderResponseDTO();
+            responseDTO.setOrderId(savedOrder.getId());
+            responseDTO.setStatus(savedOrder.getStatus());
+            responseDTO.setCreatedAt(savedOrder.getCreatedat());
 
-        List<OrderItemDTO> responseItems = new ArrayList<>();
-        for (OrderItem item : savedOrder.getItems()) {
-            OrderItemDTO dto = new OrderItemDTO();
-            dto.setId(item.getPlant().getId());
-            dto.setPlantName(item.getPlant().getName());
-            dto.setQuantity(item.getQuantity());
-            dto.setUnite_price(item.getUnite_price());
-            responseItems.add(dto);
+            List<OrderItemDTO> responseItems = new ArrayList<>();
+            for (OrderItem item : savedOrder.getItems()) {
+                OrderItemDTO dto = new OrderItemDTO();
+                dto.setId(item.getPlant().getId());
+                dto.setPlantName(item.getPlant().getName());
+                dto.setQuantity(item.getQuantity());
+                dto.setUnite_price(item.getUnite_price());
+                responseItems.add(dto);
+            }
+
+            responseDTO.setItems(responseItems);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
+        } catch (IllegalStateException e) {
+            // Cas de stock insuffisant
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la commande.");
+        }
+    }
+
+    
+    @GetMapping("/mine")
+    public ResponseEntity<?> getMyOrders(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur non authentifié.");
         }
 
-        responseDTO.setItems(responseItems);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Utilisateur introuvable.");
+        }
+
+        List<Order> userOrders = orderService.getOrdersByUser(user);
+        List<OrderDTO> dtos = userOrders.stream()
+            .map(OrderDTO::new)
+            .toList();
+
+        return ResponseEntity.ok(dtos);
     }
+
+
 }

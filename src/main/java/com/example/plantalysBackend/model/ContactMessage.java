@@ -14,11 +14,9 @@ public class ContactMessage {
 	@Id
 	  @GeneratedValue(strategy = GenerationType.IDENTITY)
 	  private Long id;
-
 	  private String name;
 	  private String email;
 	  private String message;
-
 	  private LocalDateTime sentAt = LocalDateTime.now();
 
 	public ContactMessage(Long id, String name, String email, String message, LocalDateTime sentAt) {

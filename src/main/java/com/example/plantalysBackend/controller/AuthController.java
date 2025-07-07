@@ -28,7 +28,7 @@ public class AuthController {
     @PostMapping("/signup")
     public User registerUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles("USER"); // On attribue par défaut le rôle USER
+        user.setRoles("USER"); 
         return userRepository.save(user);
     }
 

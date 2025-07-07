@@ -10,5 +10,7 @@ import com.example.plantalysBackend.model.User;
 public interface OrderRepository extends JpaRepository<Order, Long>{
 	boolean existsByUserAndItemsPlantId(User user, Long plantId);
 	List<Order> findByUser(User user);
+	
+
 
 }

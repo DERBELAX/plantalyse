@@ -33,7 +33,7 @@ public class AdminOrderController {
         List<Order> orders = orderRepository.findAll();
 
         List<OrderDTO> orderDTOs = orders.stream().map(order -> {
-            OrderDTO dto = new OrderDTO();
+            OrderDTO dto = new OrderDTO(order);
             dto.setId(order.getId());
             dto.setStatus(order.getStatus());
             dto.setCreatedAt(order.getCreatedat());

@@ -48,8 +48,7 @@ public class JwtTokenUtil {
     }
 
     
-    
-
+   
     public String getEmail(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)

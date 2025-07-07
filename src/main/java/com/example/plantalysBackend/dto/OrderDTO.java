@@ -3,6 +3,8 @@ package com.example.plantalysBackend.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.plantalysBackend.model.Order;
+
 public class OrderDTO {
 	private Long id;
     private String status;
@@ -50,5 +52,34 @@ public class OrderDTO {
 	    this.userName = userName;
 	}
 
+	// Ajoute ce constructeur dans ta classe OrderDTO
+
+	public OrderDTO(Order order) {
+	    this.id = order.getId();
+	    this.status = order.getStatus();
+	    this.createdAt = order.getCreatedat();
+
+	    // user infos
+	    if (order.getUser() != null) {
+	        this.userEmail = order.getUser().getEmail();
+	        this.userName = order.getUser().getFirstname() + " " + order.getUser().getLastname();
+	    }
+
+	    // transform order items
+	    this.items = order.getItems().stream().map(item -> {
+	        String plantName = item.getPlant() != null ? item.getPlant().getName() : null;
+	        String plantImage = (item.getPlant() != null && item.getPlant().getImages() != null && !item.getPlant().getImages().isEmpty())
+	            ? item.getPlant().getImages().get(0)
+	            : null;
+
+	        return new OrderItemDTO(
+	            item.getId(),
+	            plantName,
+	            plantImage,
+	            item.getQuantity(),
+	            item.getUnite_price()
+	        );
+	    }).toList();
+	}
 
 }
